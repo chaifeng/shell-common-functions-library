@@ -31,30 +31,30 @@ gnu_generic_getopts() {
   while read -r -u 6 line; do
     local short_opt='' long_opt='' opt_arg=''
     if [[ "$line" =~ ^$short_opt_regex\ \  ]]; then
-      #debug single opt: $line
+      #debug : -h : single opt: $line
       short_opt="${line%%  *}"
+    elif [[ "$line" =~ ^$long_opt_regex\ \  ]]; then
+      #debug : --help : long opt: $line
+      long_opt="${line%%  *}"
+    elif [[ "$line" =~ ^$short_opt_regex,\ $long_opt_regex\ \  ]]; then
+      #debug : -h, --help : single and long opt: $line
+      short_opt="${line%%, *}"
+      long_opt="${line:4}"
+      long_opt="${long_opt%%  *}"
     elif [[ "$line" =~ ^$short_opt_regex\ $multi_args_regex\ \  ]]; then
-      #debug single opt require argument: $line
+      #debug : -d DOMAIN : single opt require argument: $line
       short_opt="${line%% *}"
       opt_arg="="
     elif [[ "$line" =~ ^$long_opt_regex=$multi_args_regex\ \  ]]; then
-      #debug long opt, require argument: $line
+      #debug : --tags=TAG[TAG,...] : long opt, require argument: $line
       long_opt="${line%%=*}"
       opt_arg="="
-    elif [[ "$line" =~ ^$long_opt_regex\ \  ]]; then
-      #debug long opt: $line
-      long_opt="${line%%  *}"
     elif [[ "$line" =~ ^$short_opt_regex,\ $long_opt_regex=$multi_args_regex\ \  ]]; then
-      #debug single and long opt, require argument: $line
+      #debug : -t, --tags=TAG,[TAG,...] : single and long opt, require argument: $line
       short_opt="${line%%, *}"
       long_opt="${line:4}"
       long_opt="${long_opt%%=*}"
       opt_arg="="
-    elif [[ "$line" =~ ^$short_opt_regex,\ $long_opt_regex\ \  ]]; then
-      #debug single and long opt: $line
-      short_opt="${line%%, *}"
-      long_opt="${line:4}"
-      long_opt="${long_opt%%  *}"
     else
       continue # non-option lines
     fi
