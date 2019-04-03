@@ -1,0 +1,7 @@
+function err() {
+    if [[ "$#" -gt 0 ]]; then
+        echo "$@" >&2
+    else
+        cat >&2
+    fi
+}

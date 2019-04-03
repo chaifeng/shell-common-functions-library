@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# NO~~~~~~~~~~~~~~~~~~~~~~~~~~
+#                    __   _,--="=--,_   __
+#                   /  \."    .-.    "./  \
+#                  /  ,/  _   : :   _  \/` \
+#                  \  `| /o\  :_:  /o\ |\__/
+#                   `-'| :="~` _ `~"=: |
+#                      \`     (_)     `/
+#               .-"-.   \      |      /   .-"-.
+# .------------{     }--|  /,.-'-.,\  |--{     }------------.
+#  )           (_)_)_)  \_/`~-===-~`\_/  (_(_(_)           (
+# (                         Sorry!                          )
+#  ) This file is supposed to be included in other script. (
+# (                                                         )
+#  )       export CFLIB_INC_PATH=/some/path                (
+# (        source "$CFLIB_INC_PATH/cflib-import.sh"         )
+#  )                                                       (
+# '---------------------------------------------------------'
+################################################################################
+
+if [[ -z "${CFLIB_INC_PATH:-}" ]]; then
+    if [[ "$0" = */cflib-import.sh ]] || [[ "$0" = cflib-import.sh ]]; then
+        if [[ -n "${BASH_VERSION:-}" ]]; then
+            if [[ "$0" = */* ]]; then
+              this_pwd="${0%/*}"
+            else
+              this_pwd="$(pwd)"
+            fi
+            echo "export CFLIB_INC_PATH='${this_pwd}'; source \"\$CFLIB_INC_PATH/cflib-import.sh\""
+            unset this_pwd
+        elif [[ -n "${ZSH_VERSION:-}" ]]; then
+            echo "export CFLIB_INC_PATH='${0:A:h}'; source \"\$CFLIB_INC_PATH/cflib-import.sh\""
+        fi
+        exit 0
+    fi
+    echo "# FATAL: The env 'CFLIB_INC_PATH' is empty!" >&2
+    echo "#        Should be the path which includes file 'common.sh'" >&2
+    return 1 &>/dev/null || exit 1
+fi
+
+[[ -n "${__CFLIB_INC_COMMON_SH__:-}" ]] && return
+
+if [[ -n "${BASH_VERSION:-}" ]]; then
+    for func in "$CFLIB_INC_PATH"/functions/*; do
+        [[ -f "$func" ]] || continue
+        # shellcheck source=/dev/null
+        source "${func}"
+        export -f "${func##*/}"
+    done
+elif [[ -n "${ZSH_VERSION:-}" ]]; then
+    fpath+=("$CFLIB_INC_PATH/functions")
+    for func in "$CFLIB_INC_PATH"/functions/*; do
+        [[ -f "$func" ]] || continue
+        autoload -Uz "${func##*/}"
+    done
+else
+    echo "Only support bash and zsh"
+    return &>/dev/null || exit 2
+fi
+unset func
+
+export __CFLIB_INC_COMMON_SH__="$CFLIB_INC_PATH/common.sh"

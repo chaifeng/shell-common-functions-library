@@ -1,0 +1,7 @@
+function die() {
+    err "$@"
+    exit 1
+}
+
+# -*- mode: sh -*-
+# vi: set ft=sh :
