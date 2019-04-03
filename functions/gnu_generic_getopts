@@ -106,7 +106,7 @@ gnu_generic_getopts() {
       fi
       if [[ "$opt" = *"="* ]]; then
         val="${opt#*=}"
-        opt="${opt%=*}"
+        opt="${opt%%=*}"
       fi
       local optkey="${options_map[$opt]:-}"
       if [[ -z "$optkey" ]]; then
