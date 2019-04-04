@@ -3,19 +3,25 @@ gnu_generic_getopts() {
   declare -gA OPTIONS
   declare -ga ARGUMENTS=()
 
-  if [[ "$1" = "--help" ]] || [[ "$2" = "--help" ]]; then
+  if [[ "$2" = "--help" ]]; then
     OPTIONS[help]=true
-    shift
-    [[ "$1" = "--help" ]] && shift
+    shift 2
     ARGUMENTS=("$@")
     return
   fi
 
-  if tty &>/dev/null; then
-    local app="${1:?The function parse_gnu_help requires a function/command which outputs the GNU-compatibled help message}"; shift
-    exec 6< <("$app")
-  else
+  if [[ "$1" = "-" ]]; then
     exec 6< <(cat)
+  else
+    local app="${1:?The function parse_gnu_help requires a function/command which outputs the GNU-compatibled help message}";
+    exec 6< <("$app")
+  fi
+  shift
+
+  if [[ $# -eq 1 ]] && [[ "$1" = "--shebang "?* ]]; then
+      local -a args
+      read -a args <<< "${1#--shebang }"
+      set -- "${args[@]}"
   fi
 
   local opt="" val="" optstring=""
