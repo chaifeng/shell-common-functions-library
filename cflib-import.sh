@@ -40,23 +40,27 @@ fi
 
 [[ -n "${__CFLIB_INC_COMMON_SH__:-}" ]] && return
 
-if [[ -n "${BASH_VERSION:-}" ]]; then
-    for func in "$CFLIB_INC_PATH"/functions/*; do
-        [[ -f "$func" ]] || continue
-        # shellcheck source=/dev/null
-        source "${func}"
-        export -f "${func##*/}"
-    done
-elif [[ -n "${ZSH_VERSION:-}" ]]; then
-    fpath+=("$CFLIB_INC_PATH/functions")
-    for func in "$CFLIB_INC_PATH"/functions/*; do
-        [[ -f "$func" ]] || continue
-        autoload -Uz "${func##*/}"
-    done
-else
-    echo "Only support bash and zsh"
-    return &>/dev/null || exit 2
-fi
-unset func
+function __load_cflib__ {
+    if [[ -n "${BASH_VERSION:-}" ]]; then
+        for func in "$CFLIB_INC_PATH"/functions/*; do
+            [[ -f "$func" ]] || continue
+            # shellcheck source=/dev/null
+            source "${func}"
+            export -f "${func##*/}"
+        done
+    elif [[ -n "${ZSH_VERSION:-}" ]]; then
+        fpath+=("$CFLIB_INC_PATH/functions")
+        for func in "$CFLIB_INC_PATH"/functions/*; do
+            [[ -f "$func" ]] || continue
+            autoload -Uz "${func##*/}"
+        done
+    else
+        echo "Only support bash and zsh"
+        return 2 &>/dev/null || exit 2
+    fi
+    unset func
+} &>/dev/null
 
-export __CFLIB_INC_COMMON_SH__="$CFLIB_INC_PATH/common.sh"
+__load_cflib__
+
+__CFLIB_INC_COMMON_SH__="$CFLIB_INC_PATH/common.sh"

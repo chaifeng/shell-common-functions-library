@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-gnu_generic_getopts() {
+function gnu_generic_getopts() {
   declare -gA OPTIONS
   declare -ga ARGUMENTS=()
 
-  if [[ "$2" = "--help" ]]; then
+  if [[ "${2:-}" = "--help" ]]; then
     OPTIONS[help]=true
     shift 2
     ARGUMENTS=("$@")
@@ -20,7 +20,8 @@ gnu_generic_getopts() {
 
   if [[ $# -eq 1 ]] && [[ "$1" = "--shebang "?* ]]; then
       local -a args
-      read -a args <<< "${1#--shebang }"
+      [[ -n "${BASH_VERSION:-}" ]] && read -a args <<< "${1#--shebang }"
+      [[ -n "${ZSH_VERSION:-}" ]] && read -A args <<< "${1#--shebang }"
       set -- "${args[@]}"
   fi
 
@@ -169,7 +170,11 @@ gnu_generic_getopts() {
   done
   #declare -p OPTIONS >&2
   return "$retval"
-}
+} &>/dev/null
+
+[[ -z "${ZSH_VERSION:-}" ]] && return
+
+gnu_generic_getopts "$@"
 
 # vi: set shiftwidth=2 :
 # vi: set tabstop=2 :
