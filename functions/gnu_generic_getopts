@@ -3,14 +3,14 @@ function gnu_generic_getopts() {
   declare -gA OPTIONS
   declare -ga ARGUMENTS=()
 
-  if [[ "${2:-}" = "--help" ]]; then
+  if [[ "${2:-}" == "--help" ]]; then
     OPTIONS[help]=true
     shift 2
     ARGUMENTS=("$@")
     return
   fi
 
-  if [[ "$1" = "-" ]]; then
+  if [[ "$1" == "-" ]]; then
     exec 6< <(cat)
   else
     local app="${1:?The function parse_gnu_help requires a function/command which outputs the GNU-compatibled help message}";
@@ -18,7 +18,7 @@ function gnu_generic_getopts() {
   fi
   shift
 
-  if [[ $# -eq 1 ]] && [[ "$1" = "--shebang "?* ]]; then
+  if [[ $# -eq 1 ]] && [[ "$1" == "--shebang "?* ]]; then
       local -a args
       [[ -n "${BASH_VERSION:-}" ]] && read -r -a args <<< "${1#--shebang }"
       [[ -n "${ZSH_VERSION:-}" ]] && read -r -A args <<< "${1#--shebang }"
@@ -29,6 +29,7 @@ function gnu_generic_getopts() {
   typeset -a extra_long_opts
   typeset -A options_map
 
+  local split="(\\ \\ |	|[[:blank:]]*\$)"
   local name_regex='[a-zA-Z0-9][-_a-zA-Z0-9]*[a-zA-Z0-9]+'
   local short_opt_regex="-[a-zA-Z0-9]"
   local long_opt_regex="--$name_regex"
@@ -38,26 +39,29 @@ function gnu_generic_getopts() {
 
   while read -r -u 6 line; do
     local short_opt='' long_opt='' opt_arg=''
-    if [[ "$line" =~ ^$short_opt_regex\ \  ]]; then
+    if [[ "$line" =~ ^$short_opt_regex$split ]]; then
       #debug : -h : single opt: $line
       short_opt="${line%%  *}"
-    elif [[ "$line" =~ ^$long_opt_regex\ \  ]]; then
+      short_opt="${short_opt%%	*}"
+    elif [[ "$line" =~ ^$long_opt_regex$split ]]; then
       #debug : --help : long opt: $line
       long_opt="${line%%  *}"
-    elif [[ "$line" =~ ^$short_opt_regex,\ $long_opt_regex\ \  ]]; then
+      long_opt="${long_opt%%	*}"
+    elif [[ "$line" =~ ^$short_opt_regex,\ $long_opt_regex$split ]]; then
       #debug : -h, --help : single and long opt: $line
       short_opt="${line%%, *}"
       long_opt="${line:4}"
       long_opt="${long_opt%%  *}"
-    elif [[ "$line" =~ ^$short_opt_regex\ $args_regex\ \  ]]; then
+      long_opt="${long_opt%%	*}"
+    elif [[ "$line" =~ ^$short_opt_regex\ $args_regex$split ]]; then
       #debug : -d DOMAIN : single opt require argument: $line
       short_opt="${line%% *}"
       opt_arg="${line#* }"
-    elif [[ "$line" =~ ^$long_opt_regex=$args_regex\ \  ]]; then
+    elif [[ "$line" =~ ^$long_opt_regex=$args_regex$split ]]; then
       #debug : --tags=TAG[TAG,...] : long opt, require argument: $line
       long_opt="${line%%=*}"
       opt_arg="${line#*=}"
-    elif [[ "$line" =~ ^$short_opt_regex,\ $long_opt_regex=$args_regex\ \  ]]; then
+    elif [[ "$line" =~ ^$short_opt_regex,\ $long_opt_regex=$args_regex$split ]]; then
       #debug : -t, --tags=TAG,[TAG,...] : single and long opt, require argument: $line
       short_opt="${line%%, *}"
       long_opt="${line:4}"
@@ -68,10 +72,10 @@ function gnu_generic_getopts() {
     fi
     short_opt="${short_opt#-}"
     long_opt="${long_opt#--}"
-    if [[ "$opt_arg" =~ ^$multi_args_regex\ \  ]]; then
+    if [[ "$opt_arg" =~ ^$multi_args_regex$split ]]; then
       #debug multi: $opt_arg
       opt_arg="+"
-    elif [[ "$opt_arg" =~ ^$single_arg_regex\ \  ]]; then
+    elif [[ "$opt_arg" =~ ^$single_arg_regex$split ]]; then
       #debug single: $opt_arg
       opt_arg="="
     fi
@@ -100,10 +104,10 @@ function gnu_generic_getopts() {
   declare -a standard_params
   while param="${1:-}"; [[ -n "$param" ]]; do
     shift
-    if [[ "$param" = "--" ]]; then
+    if [[ "$param" == "--" ]]; then
       standard_params+=("--" "$@")
       break;
-    elif [[ "$param" = "-"[a-zA-Z0-9]?* ]] && [[ "${options_map[${param:1:1}]:-}" != *[=+] ]]; then
+    elif [[ "$param" == "-"[a-zA-Z0-9]?* ]] && [[ "${options_map[${param:1:1}]:-}" != *[=+] ]]; then
       for (( i=1; i<${#param}; i++ )); do
         standard_params+=("-${param:$i:1}")
       done
@@ -117,19 +121,19 @@ function gnu_generic_getopts() {
   while param="${1:-}"; [[ -n "$param" ]]; do
     shift
     local val='' opt='' boolopt='' appendopt=''
-    if [[ "$param" = "--" ]]; then
+    if [[ "$param" == "--" ]]; then
       ARGUMENTS+=("$@")
       break;
-    elif [[ "$param" = "-"* ]] || [[ "$param" = "-"? ]]; then
+    elif [[ "$param" == "-"* ]] || [[ "$param" == "-"? ]]; then
       #debug "$param"
       opt="${param#-}"
-      if [[ "${opt}" = "${opt#-}" ]] && [[ "${#opt}" -gt 2 ]]; then
+      if [[ "${opt}" == "${opt#-}" ]] && [[ "${#opt}" -gt 2 ]]; then
         val="${opt#?}"
         opt="${opt:0:1}"
       else
         opt="${opt#-}"
       fi
-      if [[ "$opt" = *"="* ]]; then
+      if [[ "$opt" == *"="* ]]; then
         val="${opt#*=}"
         opt="${opt%%=*}"
       fi
@@ -138,9 +142,9 @@ function gnu_generic_getopts() {
         err "Invalid option '$param'."
         val=""
         retval=1
-      elif [[ "$optkey" = *[=+] ]]; then
+      elif [[ "$optkey" == *[=+] ]]; then
         [[ -z "$val" ]] && val="${optkey:((${#optkey}-1)):1}"
-        [[ "$optkey" = *"+" ]] && appendopt=yes
+        [[ "$optkey" == *"+" ]] && appendopt=yes
         optkey="${optkey%?}"
       else
         boolopt=yes
@@ -148,15 +152,15 @@ function gnu_generic_getopts() {
       fi
       if [[ -n "$boolopt" ]] && [[ -n "$val" ]]; then
         declare -l val="$val"
-        if [[ "$val" = yes ]] || [[ "$val" = true ]]; then
+        if [[ "$val" == yes ]] || [[ "$val" == true ]]; then
           val=true
         else
           val=false
         fi
       fi
-      if [[ "$val" = [=+] ]]; then
+      if [[ "$val" == [=+] ]]; then
         local val="${1:-}"
-        [[ "$val" = "-"* ]] && val=
+        [[ "$val" == "-"* ]] && val=
         if [[ -z "$val" ]]; then
           optkey=
           err option "'$param'" requires an argument.
