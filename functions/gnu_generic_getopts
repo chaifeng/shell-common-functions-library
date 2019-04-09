@@ -39,6 +39,7 @@ function gnu_generic_getopts() {
 
   while read -r -u 6 line; do
     local short_opt='' long_opt='' opt_arg=''
+    declare -a rematch=()
     if [[ "$line" =~ ^$short_opt_regex$split ]]; then
       #debug : -h : single opt: $line
       short_opt="${line%%  *}"
@@ -57,16 +58,25 @@ function gnu_generic_getopts() {
       #debug : -d DOMAIN : single opt require argument: $line
       short_opt="${line%% *}"
       opt_arg="${line#* }"
-    elif [[ "$line" =~ ^$long_opt_regex=$args_regex$split ]]; then
+    elif [[ "$line" =~ ^($long_opt_regex)(=| )($args_regex)$split ]]; then
       #debug : --tags=TAG[TAG,...] : long opt, require argument: $line
-      long_opt="${line%%=*}"
-      opt_arg="${line#*=}"
-    elif [[ "$line" =~ ^$short_opt_regex,\ $long_opt_regex=$args_regex$split ]]; then
+      if [[ -n "${BASH_VERSION:-}" ]]; then
+        rematch=( "${BASH_REMATCH[@]}" )
+      elif [[ -n "${ZSH_VERSION:-}" ]]; then
+        rematch=( "${match[@]}" )
+      fi
+      long_opt="${rematch[1]}"
+      opt_arg="${rematch[3]}"
+    elif [[ "$line" =~ ^($short_opt_regex),\ ($long_opt_regex)(=| )($args_regex)$split ]]; then
+      if [[ -n "${BASH_VERSION:-}" ]]; then
+        rematch=( "${BASH_REMATCH[@]}" )
+      elif [[ -n "${ZSH_VERSION:-}" ]]; then
+        rematch=( "${match[@]}" )
+      fi
       #debug : -t, --tags=TAG,[TAG,...] : single and long opt, require argument: $line
-      short_opt="${line%%, *}"
-      long_opt="${line:4}"
-      long_opt="${long_opt%%=*}"
-      opt_arg="${line#*=}"
+      short_opt="${rematch[1]}"
+      long_opt="${rematch[2]}"
+      opt_arg="${rematch[4]}"
     else
       continue # non-option lines
     fi
