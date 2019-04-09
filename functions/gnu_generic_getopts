@@ -124,7 +124,7 @@ function gnu_generic_getopts() {
     if [[ "$param" == "--" ]]; then
       ARGUMENTS+=("$@")
       break;
-    elif [[ "$param" == "-"* ]] || [[ "$param" == "-"? ]]; then
+    elif [[ "$param" == "-"* ]]; then
       #debug "$param"
       opt="${param#-}"
       if [[ "${opt}" == "${opt#-}" ]] && [[ "${#opt}" -gt 2 ]]; then
