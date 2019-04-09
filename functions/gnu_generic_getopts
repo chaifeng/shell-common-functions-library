@@ -97,8 +97,12 @@ function gnu_generic_getopts() {
   #debug "$(typeset -p options_map)"
   #info "$@"
   declare -a standard_params
-  for param; do
-    if [[ "$param" = "-"[a-zA-Z0-9]?* ]] && [[ "${options_map[${param:1:1}]:-}" != *[=+] ]]; then
+  while param="${1:-}"; [[ -n "$param" ]]; do
+    shift
+    if [[ "$param" = "--" ]]; then
+      standard_params+=("--" "$@")
+      break;
+    elif [[ "$param" = "-"[a-zA-Z0-9]?* ]] && [[ "${options_map[${param:1:1}]:-}" != *[=+] ]]; then
       for (( i=1; i<${#param}; i++ )); do
         standard_params+=("-${param:$i:1}")
       done
@@ -112,7 +116,10 @@ function gnu_generic_getopts() {
   while param="${1:-}"; [[ -n "$param" ]]; do
     shift
     local val='' opt='' boolopt='' appendopt=''
-    if [[ "$param" = "-"* ]] || [[ "$param" = "-"? ]]; then
+    if [[ "$param" = "--" ]]; then
+      ARGUMENTS+=("$@")
+      break;
+    elif [[ "$param" = "-"* ]] || [[ "$param" = "-"? ]]; then
       #debug "$param"
       opt="${param#-}"
       if [[ "${opt}" = "${opt#-}" ]] && [[ "${#opt}" -gt 2 ]]; then
