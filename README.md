@@ -11,6 +11,8 @@ Put the following line at the begining of your script:
 
 ### die
 ### err
-### gnu_generic_getopts
 ### require
+### gnu_generic_getopts
+
+see the script `examples/test_gnu_generic_getopts.sh`
 
