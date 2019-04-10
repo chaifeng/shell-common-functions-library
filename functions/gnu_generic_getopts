@@ -11,7 +11,9 @@ function gnu_generic_getopts() {
   fi
 
   if [[ "$1" == "-" ]]; then
-    exec 6< <(cat)
+    declare -g HELP_MESSAGE
+    HELP_MESSAGE="$(cat)"
+    exec 6< <(echo "$HELP_MESSAGE")
   else
     local app="${1:?The function parse_gnu_help requires a function/command which outputs the GNU-compatibled help message}";
     exec 6< <("$app")
