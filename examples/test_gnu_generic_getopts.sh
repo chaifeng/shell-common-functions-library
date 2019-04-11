@@ -100,21 +100,34 @@ function assert_gnu_generic_getopts() (
   else
     error "FAILED: $name"
   fi
+  return $retval
 )
+
+declare -i testsCount=0 testsFailed=0
 
 function runTest() {
   local help_msg
   help_msg="$(cat)"
   unset OPTIONS ARGUMENTS
   gnu_generic_getopts - "$@" <<< "$help_msg" || error "Invalid option"
-  assert_gnu_generic_getopts "$@"
+  if assert_gnu_generic_getopts "$@"; then
+    : $(( testsCount++ ))
+  else
+    : $(( testsFailed++ ))
+  fi
   unset expectedOptions expectedArguments
 } &>/dev/null
 
+unset OPTIONS
 
 #############################################################################
 #                                TEST CASES
 #############################################################################
+
+declare -A expectedOptions=( )
+declare -a expectedArguments=( )
+runTest <<EOF
+EOF
 
 declare -A expectedOptions=( [help]=true )
 declare -a expectedArguments=( --foo foobar --bar )
@@ -495,7 +508,7 @@ gnu_generic_getopts show_help "--shebang ${testopts[*]}" || error "Found error"
 assert_gnu_generic_getopts "${testopts[*]}"
 
 printf "%.1s" "="{1..60}
-printf '\nTesting DONE.\n'
+printf '\nTesting DONE: Total: %d, failed: %d.\n' "$testsCount" "$testsFailed"
 printf "%.1s" "="{1..60}
 echo
 

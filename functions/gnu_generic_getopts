@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 function gnu_generic_getopts() {
-  declare -gA OPTIONS
+  declare -p OPTIONS &>/dev/null || declare -gA OPTIONS=()
   declare -ga ARGUMENTS=()
 
   if [[ "${2:-}" == "--help" ]]; then
@@ -27,7 +27,7 @@ function gnu_generic_getopts() {
       set -- "${args[@]}"
   fi
 
-  [[ "$1" == "--shebang" ]] && shift
+  [[ "${1:-}" == "--shebang" ]] && shift
 
   local opt="" val="" optstring=""
   typeset -a extra_long_opts
