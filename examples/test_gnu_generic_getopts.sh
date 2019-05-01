@@ -73,8 +73,17 @@ function debug() {
 } >&3
 
 function assert_gnu_generic_getopts() (
-  local name="${*}"
   local -i retval=0
+
+  local -i loopstart=0 loopend="${#expectedOptionsError[@]}"
+  [[ "${#OPTIONS_ERROR[@]}" -eq $loopend ]] || { retval=1; debug "OPTIONS_ERROR length not equals"; }
+  [[ -n "${ZSH_VERSION:-}" ]] && : $(( loopstart++ )) $(( loopend++ ))
+  for (( i=loopstart; i<loopend; i++ )); do
+      [[ "testing:${OPTIONS_ERROR[$i]:-actual}" == "testing:${expectedOptionsError[$i]:-expected}" ]] ||
+          { retval=1; debug "OPTIONS_ERROR[$i]: expected=${expectedOptionsError[$i]:-${i}expected}, actual=${OPTIONS_ERROR[$i]:-<NULL>}"; }
+  done
+  [[ "${#OPTIONS_ERROR[@]}" -gt 0 ]] && return "$retval"
+
   [[ "${#OPTIONS[@]}" -eq "${#expectedOptions[@]}" ]] || { retval=1; debug "OPTIONS length not equals"; }
   declare -a optlist
   if [[ -n "${BASH_VERSION:-}" ]]; then
@@ -95,34 +104,34 @@ function assert_gnu_generic_getopts() (
     [[ "testing:${ARGUMENTS[$i]:-actual}" == "testing:${expectedArguments[$i]:-expected}" ]] ||
       { retval=1; debug "ARGUMENTS[$i]: expected=${expectedArguments[$i]:-${i}expected}, actual=${ARGUMENTS[$i]:-<NULL>}"; }
   done
-  if [[ $retval -eq 0 ]]; then
-    success "$name"
-  else
-    error "FAILED: $name"
-  fi
   return $retval
 )
 
 declare -i testsCount=0 testsFailed=0
 
 function runTest() {
+  local name="${*}"
   local help_msg
   help_msg="$(cat)"
   unset OPTIONS ARGUMENTS
-  gnu_generic_getopts - "$@" <<< "$help_msg" || error "Invalid option"
+  gnu_generic_getopts - "$@" <<< "$help_msg" || true
   if assert_gnu_generic_getopts "$@"; then
+    success "$name"
     : $(( testsCount++ ))
   else
+    error "FAILED: $name"
     : $(( testsFailed++ ))
   fi
   expectedOptions=( )
   expectedArguments=( )
+  expectedOptionsError=( )
   OPTIONS=( )
 } &>/dev/null
 
 declare -A OPTIONS=( )
 declare -A expectedOptions=( )
 declare -a expectedArguments=( )
+declare -a expectedOptionsError=( )
 
 #############################################################################
 #                                TEST CASES
@@ -382,6 +391,34 @@ runTest --debug <<EOF
   --debug   DEBUG
 EOF
 
+expectedOptionsError=('Invalid option "--invalid-option".')
+runTest --invalid-option <<EOF
+  -v, --version    show version
+EOF
+
+expectedOptionsError=('Option "--tags" requires an argument.')
+runTest --tags <<EOF
+  -t, --tags=TAG,[TAG,...]   tags
+EOF
+
+expectedOptionsError=('Option "-t" requires an argument.')
+runTest -t <<EOF
+  -t, --tags=TAG,[TAG,...]   tags
+EOF
+
+expectedOptionsError=('Invalid option "--invalid-option".'
+                      'Invalid option "--another-invalid-option".')
+runTest --invalid-option --another-invalid-option <<EOF
+  -v, --version    show version
+EOF
+
+expectedOptionsError=('Invalid option "-a".'
+                      'Invalid option "-b".'
+                      'Invalid option "--the-third-invalid-option".')
+runTest -ab --the-third-invalid-option <<EOF
+  -v, --version    show version
+EOF
+
 ########################
 #
 help_message="
@@ -449,7 +486,7 @@ expectedOptions[tags]=https-server,http-server,squid-server,\"socks5-server\\\"
 expectedOptions[timeout]=60
 
 declare -a expectedArguments=( foobar )
-gnu_generic_getopts show_help "${testopts[@]}" || error "Found error"
+gnu_generic_getopts show_help "${testopts[@]}" || printf "Error: %s\n" "${OPTIONS_ERROR[@]}" >&2
 assert_gnu_generic_getopts "${testopts[*]}"
 
 
@@ -474,7 +511,7 @@ expectedOptions[tags]=https-server,http-server,squid-server,\"socks5-server\\\"
 expectedOptions[timeout]=60
 
 declare -a expectedArguments=( foobar )
-gnu_generic_getopts show_help "--shebang ${testopts[*]}" || error "Found error"
+gnu_generic_getopts show_help "--shebang ${testopts[*]}" || printf "Error: %s\n" "${OPTIONS_ERROR[@]}" >&2
 assert_gnu_generic_getopts "${testopts[*]}"
 
 printf "%.1s" "="{1..60}

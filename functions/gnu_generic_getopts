@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 function gnu_generic_getopts() {
   declare -p OPTIONS &>/dev/null || declare -gA OPTIONS=()
-  declare -ga ARGUMENTS=()
+  declare -ga ARGUMENTS=() OPTIONS_ERROR=()
 
   if [[ "${2:-}" == "--help" ]]; then
     OPTIONS[help]=true
@@ -153,7 +153,7 @@ function gnu_generic_getopts() {
       fi
       local optkey="${options_map[$opt]:-}"
       if [[ -z "$optkey" ]]; then
-        err "Invalid option '$param'."
+        OPTIONS_ERROR+=("Invalid option \"$param\".")
         val=""
         retval=1
       elif [[ "$optkey" == *[=+] ]]; then
@@ -177,7 +177,7 @@ function gnu_generic_getopts() {
         [[ "$val" == "-"* ]] && val=
         if [[ -z "$val" ]]; then
           optkey=
-          err option "'$param'" requires an argument.
+          OPTIONS_ERROR+=("Option \"$param\" requires an argument.")
           retval=1
           #break
         else
