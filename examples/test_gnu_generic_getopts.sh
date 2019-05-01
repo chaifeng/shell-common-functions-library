@@ -115,234 +115,205 @@ function runTest() {
   else
     : $(( testsFailed++ ))
   fi
-  unset expectedOptions expectedArguments
+  expectedOptions=( )
+  expectedArguments=( )
+  OPTIONS=( )
 } &>/dev/null
 
-unset OPTIONS
+declare -A OPTIONS=( )
+declare -A expectedOptions=( )
+declare -a expectedArguments=( )
 
 #############################################################################
 #                                TEST CASES
 #############################################################################
 
-declare -A expectedOptions=( )
-declare -a expectedArguments=( )
 runTest <<EOF
 EOF
 
-declare -A expectedOptions=( [help]=true )
-declare -a expectedArguments=( --foo foobar --bar )
+expectedOptions[help]=true
+expectedArguments=( --foo foobar --bar )
 runTest --help --foo foobar --bar <<EOF
 EOF
 
-declare -A expectedOptions=( [version]=true )
-declare -a expectedArguments=( )
+expectedOptions[version]=true
 runTest --version <<EOF
   -v, --version    show version
 EOF
 
-declare -A expectedOptions=( [version]=true )
-declare -a expectedArguments=( )
+expectedOptions[version]=true
 runTest -v <<EOF
   -v, --version    show version
 EOF
 
-declare -A expectedOptions=( [v]=true )
-declare -a expectedArguments=( )
+expectedOptions[v]=true
 runTest -v <<EOF
   -v      show version
 EOF
 
-declare -A OPTIONS=( [verbose]=true )
-declare -A expectedOptions=( [verbose]=false )
-declare -a expectedArguments=( )
+OPTIONS[verbose]=true
+expectedOptions[verbose]=false
 runTest --verbose=no <<EOF
   -V, --verbose      verbose option
 EOF
 
-declare -A expectedOptions=( [version]=true )
-declare -a expectedArguments=( )
+expectedOptions[version]=true
 runTest --version=yes <<EOF
   -v, --version      show version
 EOF
 
-declare -A expectedOptions=( [version]=true )
-declare -a expectedArguments=( )
+expectedOptions[version]=true
 runTest --version <<EOF
   --version      show version
 EOF
 
-declare -A expectedOptions=( [t]=true )
-declare -a expectedArguments=( )
+expectedOptions[t]=true
 runTest -t <<EOF
   -t
 EOF
 
-declare -A expectedOptions=( [tab]=true )
-declare -a expectedArguments=( )
+expectedOptions[tab]=true
 runTest --tab <<EOF
   --tab
 EOF
 
-declare -A expectedOptions=( [tab]=true )
-declare -a expectedArguments=( )
+expectedOptions[tab]=true
 runTest -t <<EOF
   -t, --tab
 EOF
 
-declare -A expectedOptions=( [n]=tom )
-declare -a expectedArguments=( )
+expectedOptions[n]=tom
 runTest -n tom <<EOF
   -n NAME
 EOF
 
-declare -A expectedOptions=( [name]="Tom Hanks" )
-declare -a expectedArguments=( )
+expectedOptions[name]="Tom Hanks"
 runTest --name "Tom Hanks" <<EOF
   --name=NAME
 EOF
 
-declare -A expectedOptions=( [name]="Tom Hanks" )
-declare -a expectedArguments=( )
+expectedOptions[name]="Tom Hanks"
 runTest -nTom\ Hanks <<EOF
   -n, --name=NAME
 EOF
 
-declare -A expectedOptions=( [t]=true )
-declare -a expectedArguments=( )
+expectedOptions[t]=true
 runTest -t <<EOF
   -t	short option, allow using tab to split
 EOF
 
-declare -A expectedOptions=( [tab]=true )
-declare -a expectedArguments=( )
+expectedOptions[tab]=true
 runTest --tab <<EOF
   --tab	long option, allow using tab to split
 EOF
 
-declare -A expectedOptions=( [tab]=true )
-declare -a expectedArguments=( )
+expectedOptions[tab]=true
 runTest -t <<EOF
   -t, --tab	allow using tab to split
 EOF
 
-declare -A expectedOptions=( [n]=tom )
-declare -a expectedArguments=( )
+expectedOptions[n]=tom
 runTest -n tom <<EOF
   -n NAME	short option, allow using tab to split
 EOF
 
-declare -A expectedOptions=( [name]="Tom Hanks" )
-declare -a expectedArguments=( )
+expectedOptions[name]="Tom Hanks"
 runTest --name "Tom Hanks" <<EOF
   --name=NAME	long option, allow using tab to split
 EOF
 
-declare -A expectedOptions=( [name]="Tom Hanks" )
-declare -a expectedArguments=( )
+expectedOptions[name]="Tom Hanks"
 runTest -nTom\ Hanks <<EOF
   -n, --name=NAME	allow using tab to split
 EOF
 
-declare -A expectedOptions=( [domain]=example.com )
-declare -a expectedArguments=( )
+expectedOptions[domain]=example.com
 runTest --domain example.com <<EOF
   -d, --domain=DOMAIN-NAME    domain name
 EOF
 
-declare -A expectedOptions=( [domain]=example.com )
-declare -a expectedArguments=( )
-runTest -d example.com <<EOF
-  -d, --domain=DOMAIN-NAME    domain name
+expectedOptions[domain]=example.com
+runTest -D example.com <<EOF
+  -D, --domain=DOMAIN-NAME    domain name
 EOF
 
-declare -A expectedOptions=( [domain]=example.com )
-declare -a expectedArguments=( )
+expectedOptions[domain]=example.com
 runTest --domain=example.com <<EOF
   -d, --domain=DOMAIN-NAME    domain name
 EOF
 
-declare -A expectedOptions=( [d]=example.com )
-declare -a expectedArguments=( )
+expectedOptions[d]=example.com
 runTest -d example.com <<EOF
   -d DOMAIN-NAME    domain name
 EOF
 
-declare -A expectedOptions=( [d]=example.com )
-declare -a expectedArguments=( )
+expectedOptions[d]=example.com
 runTest -dexample.com <<EOF
   -d DOMAIN-NAME    domain name
 EOF
 
-declare -A expectedOptions=( [domain]=example.com )
-declare -a expectedArguments=( )
+expectedOptions[domain]=example.com
 runTest --domain=example.com <<EOF
   --domain=DOMAIN-NAME    domain name
 EOF
 
-declare -A expectedOptions=( [domain]=example.com )
-declare -a expectedArguments=( )
+expectedOptions[domain]=example.com
 runTest -dexample.com <<EOF
   -d, --domain DOMAIN-NAME    domain name, using a single space
 EOF
 
-declare -A expectedOptions=( [domain]=example.com )
-declare -a expectedArguments=( )
+expectedOptions[domain]=example.com
 runTest --domain=example.com <<EOF
   --domain DOMAIN-NAME    domain name, using a single space
 EOF
 
-declare -A expectedOptions=( [tags]=foo )
-declare -a expectedArguments=( )
+expectedOptions[tags]=foo
 runTest --tags=foo <<EOF
   --tags=TAG,[TAG,...]   multiple tags
 EOF
 
-declare -A expectedOptions=( [tags]=foo,bar )
-declare -a expectedArguments=( )
+expectedOptions[tags]=foo,bar
 runTest --tags=foo,bar <<EOF
   --tags=TAG,[TAG,...]   multiple tags
 EOF
 
-declare -A expectedOptions=( [tags]=foo,bar )
-declare -a expectedArguments=( )
+expectedOptions[tags]=foo,bar
 runTest --tags=foo --tags bar <<EOF
   --tags=TAG,[TAG,...]   multiple tags
 EOF
 
-declare -A expectedOptions=( [tags]=foo,bar )
-declare -a expectedArguments=( )
+expectedOptions[tags]=foo,bar
 runTest -t foo --tags bar <<EOF
   -t, --tags=TAG,[TAG,...]   multiple tags
 EOF
 
-declare -A expectedOptions=( [user]=bar:secret )
-declare -a expectedArguments=( )
+expectedOptions[user]=bar:secret
 runTest -u foo --user bar:secret <<EOF
   -u, --user=USER[:PASSWORD]    Server user and password
 EOF
 
-declare -A expectedOptions=( [user]=bar )
-declare -a expectedArguments=( )
+expectedOptions[user]=bar
 runTest -ubar <<EOF
   -u, --user=USER[:PASSWORD]    Server user and password
 EOF
 
-declare -A expectedOptions=( [a]=true [b]=true )
-declare -a expectedArguments=( )
+expectedOptions[a]=true
+expectedOptions[b]=true
 runTest -a -b <<EOF
   -a   option a
   -b   option b
 EOF
 
-declare -A expectedOptions=( [a]=true [b]=true )
-declare -a expectedArguments=( )
+expectedOptions[a]=true
+expectedOptions[b]=true
 runTest -ab <<EOF
   -a   option a
   -b   option b
 EOF
 
-declare -A expectedOptions=( [a]=true [b]=true )
-declare -a expectedArguments=( -c -d )
+expectedOptions[a]=true
+expectedOptions[b]=true
+expectedArguments=( -c -d )
 runTest -ab -- -c -d <<EOF
   -a   option a
   -b   option b
@@ -350,8 +321,9 @@ runTest -ab -- -c -d <<EOF
   -d   option d
 EOF
 
-declare -A expectedOptions=( [a]=true [b]=true )
-declare -a expectedArguments=( -ab -cd )
+expectedOptions[a]=true
+expectedOptions[b]=true
+expectedArguments=( -ab -cd )
 runTest -ab -- -ab -cd <<EOF
   -a   option a
   -b   option b
@@ -359,20 +331,19 @@ runTest -ab -- -ab -cd <<EOF
   -d   option d
 EOF
 
-declare -A expectedOptions=( [name]="foo bar" )
-declare -a expectedArguments=( )
+expectedOptions[name]="foo bar"
 runTest -n"foo bar" <<EOF
   -n, --name=NAME    name option
 EOF
 
-declare -A expectedOptions=( [name]="foo:bar" )
-declare -a expectedArguments=( )
+expectedOptions[name]="foo:bar"
 runTest -nfoo:bar <<EOF
   -n, --name=NAME    name option
 EOF
 
-declare -A expectedOptions=( [a]=true [b]=true )
-declare -a expectedArguments=( foo -ab bar --ddd )
+expectedOptions[a]=true
+expectedOptions[b]=true
+expectedArguments=( foo -ab bar --ddd )
 runTest -ab foo -- -ab bar --ddd <<EOF
   -a           option a
   -b           option b
@@ -380,8 +351,9 @@ runTest -ab foo -- -ab bar --ddd <<EOF
   -d, --ddd    option d
 EOF
 
-declare -A expectedOptions=( [a]=true [b]=true )
-declare -a expectedArguments=( foo -ab bar --ddd )
+expectedOptions[a]=true
+expectedOptions[b]=true
+expectedArguments=( foo -ab bar --ddd )
 runTest --shebang -ab foo -- -ab bar --ddd <<EOF
   -a           option a
   -b           option b
@@ -389,8 +361,9 @@ runTest --shebang -ab foo -- -ab bar --ddd <<EOF
   -d, --ddd    option d
 EOF
 
-declare -A expectedOptions=( [a]=true [b]=true )
-declare -a expectedArguments=( foo -ab bar --ddd )
+expectedOptions[a]=true
+expectedOptions[b]=true
+expectedArguments=( foo -ab bar --ddd )
 runTest '--shebang -ab foo -- -ab bar --ddd' <<EOF
   -a           option a
   -b           option b
@@ -398,15 +371,13 @@ runTest '--shebang -ab foo -- -ab bar --ddd' <<EOF
   -d, --ddd    option d
 EOF
 
-declare -A expectedOptions=( [tags]=foo,bar )
-declare -a expectedArguments=( )
+expectedOptions[tags]=foo,bar
 runTest -t foo -t bar <<EOF
   -t, --tags=TAG,[TAG,...]   multiple tags
 EOF
 
 
-declare -A expectedOptions=( [debug]=true )
-declare -a expectedArguments=( )
+expectedOptions[debug]=true
 runTest --debug <<EOF
   --debug   DEBUG
 EOF
@@ -482,8 +453,7 @@ gnu_generic_getopts show_help "${testopts[@]}" || error "Found error"
 assert_gnu_generic_getopts "${testopts[*]}"
 
 
-
-declare -A OPTIONS=()
+declare -A OPTIONS=( )
 OPTIONS[login]=false
 OPTIONS[help]=false
 OPTIONS[debug]=false
