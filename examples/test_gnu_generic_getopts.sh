@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
-
-eval "$("${0%/*}/../cflib-import.sh")"
+set -euo pipefail
+export CFLIB_INC_PATH="${0%/*}/.."; source "$CFLIB_INC_PATH/cflib-import.sh"
 
 declare -A OPTIONS
+OPTIONS[help]=false
+OPTIONS[debug]=false
 OPTIONS[hello]=World
 OPTIONS[title]="a demo of gnu_generic_getopts"
 
