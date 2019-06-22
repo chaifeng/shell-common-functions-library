@@ -20,10 +20,12 @@ function gnu_generic_getopts() {
   fi
   shift
 
-  if [[ $# -eq 1 ]] && [[ "$1" == "--shebang "?* ]]; then
+  if [[ $# -ge 1 ]] && [[ "$1" == "--shebang "?* ]]; then
       local -a args
       [[ -n "${BASH_VERSION:-}" ]] && read -r -a args <<< "${1}"
       [[ -n "${ZSH_VERSION:-}" ]] && read -r -A args <<< "${1}"
+      shift
+      args+=("$@")
       set -- "${args[@]}"
   fi
 

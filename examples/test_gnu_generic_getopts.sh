@@ -380,6 +380,16 @@ runTest '--shebang -ab foo -- -ab bar --ddd' <<EOF
   -d, --ddd    option d
 EOF
 
+expectedOptions[a]=true
+expectedOptions[b]=true
+expectedArguments=( foo -ab more-than-one --ddd )
+runTest '--shebang -ab foo -- -ab' more-than-one --ddd <<EOF
+  -a           option a
+  -b           option b
+  -c           option c
+  -d, --ddd    option d
+EOF
+
 expectedOptions[tags]=foo,bar
 runTest -t foo -t bar <<EOF
   -t, --tags=TAG,[TAG,...]   multiple tags
