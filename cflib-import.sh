@@ -37,6 +37,8 @@ if [[ -z "${CFLIB_INC_PATH:-}" ]]; then
     echo "#        Should be the path which includes file 'common.sh'" >&2
     return 1 &>/dev/null || exit 1
 fi
+exec 8>&2
+export BASH_XTRACEFD=8
 
 [[ -n "${__CFLIB_INC_COMMON_SH__:-}" ]] && return
 
