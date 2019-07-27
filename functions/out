@@ -1,0 +1,9 @@
+# -*- mode: sh -*-
+
+function out() {
+    if [[ "$#" -gt 0 ]]; then
+        echo "$@"
+    else
+        cat
+    fi
+} 2>/dev/null 8>/dev/null
