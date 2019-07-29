@@ -40,7 +40,7 @@ fi
 exec 8>&2
 export BASH_XTRACEFD=8
 
-[[ -n "${__CFLIB_INC_COMMON_SH__:-}" ]] && return
+[[ -n "${__CFLIB_INC_COMMON_SH__:-}" ]] && type gnu_generic_getopts &>/dev/null && return
 
 function __load_cflib__ {
     if [[ -n "${BASH_VERSION:-}" ]]; then
@@ -61,7 +61,7 @@ function __load_cflib__ {
         return 2 &>/dev/null || exit 2
     fi
     unset func
-} &>/dev/null
+} >&2 2>/dev/null 8>/dev/null
 
 __load_cflib__
 
