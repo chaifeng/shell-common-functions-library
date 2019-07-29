@@ -1,0 +1,14 @@
+# -*- mode: sh -*-
+
+function debug() {
+    if [[ "$#" -gt 0 ]]; then
+        out "[DEBUG]" "$@" >&2
+    else
+        while IFS='\n' read -r line; do
+            printf "[DEBUG] %s\n" "$line" >&2
+        done
+    fi
+} >&2
+
+[[ -n "${ZSH_VERSION:-}" ]] || return 0
+debug "$@"

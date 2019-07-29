@@ -7,3 +7,6 @@ function out() {
         cat
     fi
 } 2>/dev/null 8>/dev/null
+
+[[ -n "${ZSH_VERSION:-}" ]] || return 0
+out "$@"
