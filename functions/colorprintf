@@ -1,0 +1,15 @@
+# -*- mode: sh -*-
+
+# This function needs extglob
+# shopt -s extglob
+
+function colorprintf() {
+    if [[ "${COLORPRINTF:=true}" == true ]]; then
+        printf "$@"
+    else
+        printf "${1//\\e\[+([0-9]|;|%|d)m/}" "${@:2}"
+    fi
+}
+
+[[ -n "${ZSH_VERSION:-}" ]] || return 0
+colorprintf "$@"
