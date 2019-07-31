@@ -1,0 +1,11 @@
+# -*- mode: sh -*-
+# vi: set ft=sh :
+
+function load_function() {
+  local file="${1:?script filename}"
+  local func="${2:?function name}"
+  source <(builtin command sed -Ene "/^function\s+${func}\\b/,/^}\$/p" "$file")
+} 8>/dev/null
+
+[[ -n "${ZSH_VERSION:-}" ]] || return 0
+load_function "$@"

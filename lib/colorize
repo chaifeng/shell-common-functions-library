@@ -1,0 +1,14 @@
+# -*- mode: sh -*-
+
+function err() {
+    declare suffix="\n"
+    if [[ "${1:-}" == "-e" ]]; then
+        suffix=""
+        shift
+    fi
+    if [[ "$#" -gt 0 ]]; then
+        printf "\x1b[1;31m%s\x1b[0;m${suffix}" "$*"
+    else
+        printf "\x1b[1;31m%s\x1b[0;m${suffix}" "$(cat)"
+    fi
+} >&2 8>/dev/null
