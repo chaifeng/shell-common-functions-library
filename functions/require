@@ -1,5 +1,8 @@
 function require() {
   local file="${CFLIB_INC_PATH}/lib/${1}"
+  if [[ -d "$file" ]]; then
+      file="${file}/${file##*/}.sh"
+  fi
   [[ -f "$file" ]] && source "$file"
 }
 
