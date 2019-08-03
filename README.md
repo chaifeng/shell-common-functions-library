@@ -40,3 +40,5 @@ It's part of Shell Common Functions Library
         sudo rm -rf /   # This is the actual command to run on your host!
                         # DO NOT worry! By using Bach Testing Framework it won't actually run.
     }
+
+[More Examples: examples/test-bach-unit-testing-framework.sh](examples/test-bach-unit-testing-framework.sh)
