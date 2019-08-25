@@ -48,7 +48,6 @@ function __load_cflib__ {
             [[ -f "$func" ]] || continue
             # shellcheck source=/dev/null
             source "${func}"
-            export -f "${func##*/}"
         done
     elif [[ -n "${ZSH_VERSION:-}" ]]; then
         fpath+=("$CFLIB_INC_PATH/functions")
