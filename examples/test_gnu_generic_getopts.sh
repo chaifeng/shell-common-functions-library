@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-export CFLIB_INC_PATH="${0%/*}/.."; source "$CFLIB_INC_PATH/cflib-import.sh"
+source <("$(cd "$(dirname "$BASH_SOURCE")"; pwd -P)"/../cflib-import.sh)
 
 declare -A OPTIONS
 OPTIONS[help]=false
