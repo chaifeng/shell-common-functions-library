@@ -1,6 +1,11 @@
 Common Functions Library
 ========================
 
+## Requires
+
+- Bash v4.3+
+- Zsh v5.3+
+
 ## Usage
 
 Put the following line at the begining of your script:
@@ -12,6 +17,10 @@ Put the following line at the begining of your script:
 [Bach](lib/bach/) is a unit testing framework for Bash
 
 It's part of Shell Common Functions Library
+
+### Requires
+
+- Bash v4.3+
 
 ### Examples
 
