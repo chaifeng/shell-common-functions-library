@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-source <("$(cd "$(dirname "$BASH_SOURCE")"; pwd -P)"/../cflib-import.sh)
+source <("$(cd "$(dirname "${BASH_SOURCE:-$ZSH_SCRIPT}")"; pwd -P)"/../cflib-import.sh)
 
 declare -A OPTIONS
 OPTIONS[help]=false
