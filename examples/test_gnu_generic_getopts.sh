@@ -93,7 +93,7 @@ function assert_gnu_generic_getopts() (
   else
     optlist+=("${(@k)expectedOptions}")
   fi
-  for opt in "${optlist[@]}"; do
+  [[ -z "${optlist:-}" ]] || for opt in "${optlist[@]}"; do
     [[ $opt == "s" ]] && continue
     [[ "testing:${OPTIONS[$opt]:-actual}" == "testing:${expectedOptions[$opt]:-expected}" ]] ||
       { retval=1; debug "OPTIONS[$opt]: expected=${expectedOptions[$opt]:-$opt expected}, actual=${OPTIONS[$opt]:-<NULL>}"; }

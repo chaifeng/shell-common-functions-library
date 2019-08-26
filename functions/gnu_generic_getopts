@@ -134,7 +134,8 @@ function gnu_generic_getopts() {
     fi
   done
   #debug "${standard_params[@]}"
-  set -- "${standard_params[@]}"
+  [[ -z "${standard_params:-}" ]] ||
+      set -- "${standard_params[@]}"
   local retval=0
   while param="${1:-}"; [[ -n "$param" ]]; do
     shift
