@@ -1,6 +1,8 @@
 Common Functions Library
 ========================
 
+[![Build Status](https://travis-ci.org/chaifeng/shell-common-functions-library.svg)](https://travis-ci.org/chaifeng/shell-common-functions-library/)
+
 ## Requires
 
 - Bash v4.3+
