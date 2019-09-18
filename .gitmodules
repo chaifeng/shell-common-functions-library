@@ -1,0 +1,3 @@
+[submodule "lib/bach"]
+	path = lib/bach
+	url = https://github.com/bach-sh/bach.git

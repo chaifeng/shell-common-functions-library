@@ -41,7 +41,5 @@ test-requires-a-folder-with-multi-files-in-lib() {
     require foobar
 }
 test-requires-a-folder-with-multi-files-in-lib-assert() {
-    @dryrun source ./lib/foobar/alpha.sh
-    @dryrun source ./lib/foobar/zoo.sh
     @dryrun source ./lib/foobar/foobar.sh
 }
