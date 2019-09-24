@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -x
 project_path="$(cd "$(dirname "$BASH_SOURCE")/.."; pwd -P)"
 source <("${project_path}"/cflib-import.sh)
 require bach
