@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -x
 project_path="$(cd "$(dirname "$BASH_SOURCE")/.."; pwd -P)"
 source <("${project_path}"/cflib-import.sh)
 require bach
@@ -15,6 +14,8 @@ require bach
     @load_function "${project_path}/functions/require" require
 }
 
+set -x
+BACH_TESTS=test-requires-a-file-in-lib
 test-requires-a-file-in-lib() {
     @touch "$lib/beta"
 
@@ -22,6 +23,7 @@ test-requires-a-file-in-lib() {
 }
 test-requires-a-file-in-lib-assert() {
     @dryrun source ./lib/beta
+    @false
 }
 
 
