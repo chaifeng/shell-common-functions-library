@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-set -x
-source <("$(cd "$(dirname "$BASH_SOURCE")"; pwd -P)"/../cflib-import.sh)
+project_path="$(cd "$(dirname "$BASH_SOURCE")/.."; pwd -P)"
+source <("${project_path}"/cflib-import.sh)
 require bach
 
 @setup {
@@ -11,7 +11,7 @@ require bach
 
 @setup-test {
     @mock source
-    @load_function "${self%/*/*}/functions/require" require
+    @load_function "${project_path}/functions/require" require
 }
 
 test-requires-a-file-in-lib() {
