@@ -10,6 +10,6 @@ jobs:
     steps:
     - uses: actions/checkout@v1
       with:
-        submodules: yes
+        submodules: true
     - name: Test Shell Common Functions Library
       run: ./run-tests.sh
