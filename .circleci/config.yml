@@ -1,14 +1,13 @@
 version: 2.1
 
 orbs:
-  win: circleci/windows@2.0.0
+  win: circleci/windows@1.0.0
 
 jobs:
   build:
     executor:
-      name: default
+      name: win/vs2019
+      shell: bash.exe
     steps:
       - checkout
-      - run:
-          command: ./run-tests.sh
-          shell: bash.exe
+      - run: ./run-tests.sh
