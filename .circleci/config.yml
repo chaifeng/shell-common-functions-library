@@ -1,11 +1,15 @@
 version: 2.1
 
 jobs:
-  build:
+  test-on-linux:
     docker:
       - image: buildpack-deps:trusty
-    steps:
+    steps: &steps
       - checkout
       - run: git submodule sync
       - run: git submodule update --init
       - run: ./run-tests.sh
+  test-on-macos:
+    macos:
+      xcode: "11.1.0"
+    steps: *steps
