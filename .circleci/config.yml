@@ -5,9 +5,8 @@ orbs:
 
 jobs:
   build:
-    executor:
-      name: win/vs2019
-      shell: bash.exe
     steps:
       - checkout
-      - run: ./run-tests.sh
+      - run:
+          command: ./run-tests.sh
+          shell: bash.exe
