@@ -6,4 +6,6 @@ jobs:
       - image: buildpack-deps:trusty
     steps:
       - checkout
+      - run: git submodule sync
+      - run: git submodule update --init
       - run: ./run-tests.sh
