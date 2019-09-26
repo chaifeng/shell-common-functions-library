@@ -13,3 +13,11 @@ jobs:
     macos:
       xcode: "11.1.0"
     steps: *steps
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test-on-linux
+      - test-on-macos
+
