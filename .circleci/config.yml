@@ -9,15 +9,15 @@ jobs:
       - run: git submodule sync
       - run: git submodule update --init
       - run: ./run-tests.sh
-  test-on-macos:
-    macos:
-      xcode: "11.1.0"
-    steps: *steps
+#   test-on-macos:
+#     macos:
+#       xcode: "11.1.0"
+#     steps: *steps
 
 workflows:
   version: 2
   test:
     jobs:
       - test-on-linux
-      - test-on-macos
+#      - test-on-macos
 
