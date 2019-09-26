@@ -1,13 +1,9 @@
 version: 2.1
 
-orbs:
-  win: circleci/windows@2.0.0
-
 jobs:
   build:
-    executor:
-      name: default
-      shell: bash.exe
+    docker:
+      - image: buildpack-deps:trusty
     steps:
       - checkout
       - run: ./run-tests.sh
