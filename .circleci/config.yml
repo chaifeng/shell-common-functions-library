@@ -1,11 +1,23 @@
 version: 2.1
 
 jobs:
-  test:
+  test-on-4.3:
     docker:
-      - image: buildpack-deps:trusty
-    steps:
+      - image: bash:4.3
+    steps: &step
       - checkout
       - run: git submodule sync
       - run: git submodule update --init
       - run: ./run-tests.sh
+  test-on-4.4:
+    docker:
+      - image: bash:4.4
+    steps: *step
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test-on-4.3
+      - test-on-4.4
+
