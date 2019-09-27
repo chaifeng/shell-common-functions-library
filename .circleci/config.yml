@@ -6,7 +6,7 @@ jobs:
       - image: bash:4.3
     steps: &step
       - run: apk update
-      - run: apk add git
+      - run: apk add git coreutils diffutils perl-utils
       - checkout
       - run: git submodule sync
       - run: git submodule update --init
