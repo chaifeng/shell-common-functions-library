@@ -3,7 +3,7 @@ set -uo pipefail
 
 PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin
 
-bash_bin=/bin/bash
+bash_bin="$BASH"
 
 case "$(uname)" in
     Darwin)
