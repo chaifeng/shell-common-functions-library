@@ -12,6 +12,17 @@ case "$(uname)" in
         fi
         bash_bin="$(brew --prefix)"/bin/bash
         ;;
+    Linux)
+        if [[ -e /etc/os-release ]]; then
+            source /etc/os-release
+            case "$ID" in
+                alpine)
+                    apk update
+                    apk add git coreutils diffutils perl-utils
+                    ;;
+            esac
+        fi
+        ;;
 esac
 
 "$bash_bin" --version
