@@ -5,8 +5,12 @@ PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin
 
 bash_bin="$BASH"
 
-OS="$(uname)"
-case "$OS" in
+OS_NAME="$(uname)"
+if [[ -e /etc/os-release ]]; then
+    source /etc/os-release
+    OS_NAME="${OS_NAME}-${ID}-${VERSION_ID}"
+fi
+case "$OS_NAME" in
     Darwin)
         if ! brew list --full-name --versions bash &>/dev/null; then
             brew install bash
@@ -15,12 +19,6 @@ case "$OS" in
             bash_bin="$(brew --prefix)"/bin/bash
         fi
         ;;
-    Linux)
-        if [[ -e /etc/os-release ]]; then
-            source /etc/os-release
-            OS="Linux-${ID}-${VERSION_ID}"
-        fi
-        ;;&
     Linux-alpine-*)
         apk update
         apk add coreutils diffutils perl-utils
