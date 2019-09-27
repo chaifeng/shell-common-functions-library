@@ -5,23 +5,25 @@ PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin
 
 bash_bin="$BASH"
 
-case "$(uname)" in
+OS="$(uname)"
+case "$OS" in
     Darwin)
         if ! brew list --full-name --versions bash &>/dev/null; then
             brew install bash
         fi
-        bash_bin="$(brew --prefix)"/bin/bash
+        if [[ "$BASH" == /bin/bash ]]; then
+            bash_bin="$(brew --prefix)"/bin/bash
+        fi
         ;;
     Linux)
         if [[ -e /etc/os-release ]]; then
             source /etc/os-release
-            case "$ID" in
-                alpine)
-                    apk update
-                    apk add coreutils diffutils perl-utils
-                    ;;
-            esac
+            OS="Linux-${ID}-${VERSION_ID}"
         fi
+        ;;&
+    Linux-alpine-*)
+        apk update
+        apk add coreutils diffutils perl-utils
         ;;
 esac
 
