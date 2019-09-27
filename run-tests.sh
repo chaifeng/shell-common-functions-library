@@ -18,7 +18,7 @@ case "$(uname)" in
             case "$ID" in
                 alpine)
                     apk update
-                    apk add git coreutils diffutils perl-utils
+                    apk add coreutils diffutils perl-utils
                     ;;
             esac
         fi

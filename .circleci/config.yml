@@ -5,6 +5,8 @@ jobs:
     docker:
       - image: bash:4.3
     steps: &step
+      - run: apk update
+      - run: apk add git
       - checkout
       - run: git submodule sync
       - run: git submodule update --init
