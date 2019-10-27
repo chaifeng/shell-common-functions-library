@@ -16,9 +16,7 @@ Put the following line at the begining of your script:
 
 ## Bach Testing Framework
 
-[Bach](lib/bach/) is a unit testing framework for Bash
-
-It's part of Shell Common Functions Library
+[Bach](https://bach.sh) is a unit testing framework for Bash
 
 ### Requires
 
