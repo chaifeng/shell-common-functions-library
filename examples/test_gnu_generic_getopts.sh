@@ -243,6 +243,11 @@ runTest -j8 <<EOF
   -j, --jobs=JOBS   Jobs
 EOF
 
+expectedOptions[jobs]=8
+runTest -j8 <<EOF
+  -j, --jobs=N   Allow N jobs at once
+EOF
+
 expectedOptions[domain]=example.com
 runTest --domain example.com <<EOF
   -d, --domain=DOMAIN-NAME    domain name

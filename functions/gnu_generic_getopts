@@ -41,7 +41,7 @@ function gnu_generic_getopts() {
   local name_regex='[a-zA-Z0-9][-_a-zA-Z0-9]*[a-zA-Z0-9]+'
   local short_opt_regex="-[a-zA-Z0-9]"
   local long_opt_regex="--$name_regex"
-  local single_arg_regex='[a-zA-Z0-9][^[:blank:]]+'
+  local single_arg_regex='[a-zA-Z0-9][^[:blank:]]*'
   local args_regex="${single_arg_regex},?(\\[[^]]*\\.\\.\\.[^]]*\\])?"
   local multi_args_regex="${single_arg_regex},?\\[[^]]*\\.\\.\\.[^]]*\\]"
 
