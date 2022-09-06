@@ -21,15 +21,12 @@
 if [[ -z "${CFLIB_INC_PATH:-}" ]]; then
     if [[ "$0" = */cflib-import.sh ]] || [[ "$0" = cflib-import.sh ]]; then
         if [[ -n "${BASH_VERSION:-}" ]]; then
-            if [[ "$0" = */* ]]; then
-              this_pwd="${0%/*}"
-            else
-              this_pwd="$(pwd)"
-            fi
-            echo "export CFLIB_INC_PATH='${this_pwd}'; source \"\$CFLIB_INC_PATH/cflib-import.sh\""
+            this_pwd="$(realpath "$0")"
+            this_pwd="${this_pwd%/*}"
+            echo "CFLIB_INC_PATH='${this_pwd}'; source \"\$CFLIB_INC_PATH/cflib-import.sh\""
             unset this_pwd
         elif [[ -n "${ZSH_VERSION:-}" ]]; then
-            echo "export CFLIB_INC_PATH='${0:A:h}'; source \"\$CFLIB_INC_PATH/cflib-import.sh\""
+            echo "CFLIB_INC_PATH='${0:A:h}'; source \"\$CFLIB_INC_PATH/cflib-import.sh\""
         fi
         exit 0
     fi
