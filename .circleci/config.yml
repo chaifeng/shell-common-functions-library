@@ -7,7 +7,7 @@ jobs:
     steps: &step
       - run: apk update
       - run: apk add git openssh
-      - run: [ ! -e /bin/bash ] && [ -e /usr/local/bin/bash ] && ln -s /usr/local/bin/bash /bin/bash
+      - run: "[ ! -e /bin/bash ] && [ -e /usr/local/bin/bash ] && ln -s /usr/local/bin/bash /bin/bash"
       - checkout
       - run: git submodule sync
       - run: git submodule update --init
