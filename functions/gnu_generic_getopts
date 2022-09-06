@@ -146,7 +146,7 @@ function gnu_generic_getopts() {
     elif [[ "$param" == "-"* ]]; then
       #debug "$param"
       opt="${param#-}"
-      if [[ "${opt}" == "${opt#-}" ]] && [[ "${#opt}" -gt 2 ]]; then
+      if [[ "${opt}" == "${opt#-}" ]] && [[ "${#opt}" -ge 2 ]]; then
         val="${opt#?}"
         opt="${opt:0:1}"
       else

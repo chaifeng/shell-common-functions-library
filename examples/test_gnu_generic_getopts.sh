@@ -238,6 +238,11 @@ runTest -nTom\ Hanks <<EOF
   -n, --name=NAME	allow using tab to split
 EOF
 
+expectedOptions[jobs]=8
+runTest -j8 <<EOF
+  -j, --jobs=JOBS   Jobs
+EOF
+
 expectedOptions[domain]=example.com
 runTest --domain example.com <<EOF
   -d, --domain=DOMAIN-NAME    domain name
