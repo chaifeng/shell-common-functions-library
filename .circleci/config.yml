@@ -8,8 +8,6 @@ jobs:
       - run: apk update
       - run: apk add git openssh
       - checkout
-      - run: git submodule sync
-      - run: git submodule update --init
       - run: ./run-tests.sh
   test-on-4_4:
     docker:
