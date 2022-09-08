@@ -13,17 +13,26 @@ Common Functions Library
 Put the following line at the begining of your script:
 
     export CFLIB_INC_PATH='/path/to/common-functions-lib'; source "$CFLIB_INC_PATH/cflib-import.sh"
+    
+## Functions
 
-## Bach Testing Framework
+### die
+### err
+### require
+### gnu_generic_getopts
+
+see the test suite `[examples/test_gnu_generic_getopts.sh](examples/test_gnu_generic_getopts.sh)`
+
+## See Also
+### Bach Testing Framework
 
 [Bach](https://bach.sh) is a unit testing framework for Bash
 
-### Requires
+#### Requires
 
 - Bash v4.3+
 
-### Examples
-
+#### Examples
 
     #!/usr/bin/env bash
     set -euo pipefail
@@ -56,15 +65,3 @@ Put the following line at the begining of your script:
 
         rm -rf ~/src/your-awesome-project/.git ~/src/code/.git
     }
-
-
-[More Examples: examples/test-bach-unit-testing-framework.sh](examples/test-bach-unit-testing-framework.sh)
-    
-## Functions
-
-### die
-### err
-### require
-### gnu_generic_getopts
-
-see the script `examples/test_gnu_generic_getopts.sh`
