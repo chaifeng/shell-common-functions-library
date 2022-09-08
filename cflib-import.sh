@@ -21,17 +21,14 @@
 if [[ -z "${CFLIB_INC_PATH:-}" ]]; then
     if [[ "$0" = */cflib-import.sh ]] || [[ "$0" = cflib-import.sh ]]; then
         if [[ -n "${BASH_VERSION:-}" ]]; then
-            this_pwd="$(realpath "$0")"
-            this_pwd="${this_pwd%/*}"
-            echo "CFLIB_INC_PATH='${this_pwd}'; source \"\$CFLIB_INC_PATH/cflib-import.sh\""
-            unset this_pwd
+            echo "CFLIB_INC_PATH='$(B="${0%${0##*/}}"; cd "${B:-.}"; pwd)'; source \"\$CFLIB_INC_PATH/cflib-import.sh\""
         elif [[ -n "${ZSH_VERSION:-}" ]]; then
             echo "CFLIB_INC_PATH='${0:A:h}'; source \"\$CFLIB_INC_PATH/cflib-import.sh\""
         fi
         exit 0
     fi
     echo "# FATAL: The env 'CFLIB_INC_PATH' is empty!" >&2
-    echo "#        Should be the path which includes file 'common.sh'" >&2
+    echo "#        Should be the path which includes file 'cflib-import.sh'" >&2
     return 1 &>/dev/null || exit 1
 fi
 exec 8>&2
