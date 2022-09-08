@@ -39,7 +39,7 @@ function err() {
 
 retval=0
 cd "$(dirname "${BASH_SOURCE}")"
-for file in examples/test*; do
+for file in examples/test* lib/bach/examples/learn* lib/bach/tests/*.test.sh; do
     out "Running $file"
     if grep -E "^[[:blank:]]*BACH_TESTS=.+" "$file"; then
         err "Found defination of BACH_TESTS in $file"
