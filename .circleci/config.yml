@@ -7,8 +7,8 @@ jobs:
     steps: &step
       - run: apk update
       - run: apk add git openssh
-      - run: git submodule update --init
       - checkout
+      - run: git submodule update --init
       - run: ./run-tests.sh
   test-on-4_4:
     docker:
