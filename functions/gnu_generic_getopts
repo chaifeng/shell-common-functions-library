@@ -172,8 +172,8 @@ function gnu_generic_getopts() {
         [[ -z "$val" ]] && val=true
       fi
       if [[ -n "$boolopt" ]] && [[ -n "$val" ]]; then
-        declare -l val="$val"
-        if [[ "$val" == yes ]] || [[ "$val" == true ]]; then
+        declare -l bval="$val"
+        if [[ "$bval" == @(yes|true|y|t|1) ]]; then
           val=true
         else
           val=false

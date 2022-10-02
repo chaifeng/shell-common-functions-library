@@ -288,6 +288,13 @@ runTest --domain=example.com <<EOF
   --domain DOMAIN-NAME    domain name, using a single space
 EOF
 
+expectedOptions[name]=Tom
+expectedOptions[verbose]=true
+runTest --verbose --name=Tom <<EOF
+  --name=NAME
+  --verbose
+EOF
+
 expectedOptions[tags]=foo
 runTest --tags=foo <<EOF
   --tags=TAG,[TAG,...]   multiple tags
