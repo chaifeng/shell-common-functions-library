@@ -7,7 +7,7 @@ function gnu_generic_getopts() {
 
   if [[ "$1" == "-" ]]; then
     builtin declare -g HELP_MESSAGE
-    IFS= builtin read -rd '' HELP_MESSAGE
+    IFS= builtin read -rd '' HELP_MESSAGE || true
     exec 6< <(builtin echo "$HELP_MESSAGE")
   else
     builtin declare app="${1:?The function parse_gnu_help requires a function/command which outputs the GNU-compatibled help message}";
@@ -19,7 +19,7 @@ function gnu_generic_getopts() {
       builtin shift
       OPTIONS[help]=true
       ARGUMENTS=("$@")
-      IFS= builtin read -u 6 -rd '' HELP_MESSAGE
+      IFS= builtin read -u 6 -rd '' HELP_MESSAGE || true
       builtin echo "$HELP_MESSAGE"
       builtin return 1
   fi
