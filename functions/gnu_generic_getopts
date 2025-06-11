@@ -1,52 +1,54 @@
-#autoload -U gnu_generic_getopts
 #!/usr/bin/env bash
+#autoload -U gnu_generic_getopts
+# -*- mode: sh -*-
 function gnu_generic_getopts() {
   declare -p OPTIONS &>/dev/null || declare -gA OPTIONS=()
   declare -ga ARGUMENTS=() OPTIONS_ERROR=()
 
   if [[ "$1" == "-" ]]; then
-    declare -g HELP_MESSAGE
-    HELP_MESSAGE="$(cat)"
-    exec 6< <(echo "$HELP_MESSAGE")
+    builtin declare -g HELP_MESSAGE
+    IFS= builtin read -rd '' HELP_MESSAGE
+    exec 6< <(builtin echo "$HELP_MESSAGE")
   else
-    local app="${1:?The function parse_gnu_help requires a function/command which outputs the GNU-compatibled help message}";
+    builtin declare app="${1:?The function parse_gnu_help requires a function/command which outputs the GNU-compatibled help message}";
     exec 6< <("$app")
   fi
-  shift
+  builtin shift
 
   if [[ "${1:-}" == "--help" ]]; then
-      shift
+      builtin shift
       OPTIONS[help]=true
       ARGUMENTS=("$@")
-      cat <&6
-      return 1
+      IFS= builtin read -u 6 -rd '' HELP_MESSAGE
+      builtin echo "$HELP_MESSAGE"
+      builtin return 1
   fi
 
   if [[ $# -ge 1 ]] && [[ "$1" == "--shebang "?* ]]; then
-      local -a args
-      [[ -n "${BASH_VERSION:-}" ]] && read -r -a args <<< "${1}"
-      [[ -n "${ZSH_VERSION:-}" ]] && read -r -A args <<< "${1}"
-      shift
+      builtin declare -a args
+      [[ -n "${BASH_VERSION:-}" ]] && builtin read -r -a args <<< "${1}"
+      [[ -n "${ZSH_VERSION:-}" ]] && builtin read -r -A args <<< "${1}"
+      builtin shift
       args+=("$@")
       set -- "${args[@]}"
   fi
 
-  [[ "${1:-}" == "--shebang" ]] && shift
+  [[ "${1:-}" == "--shebang" ]] && builtin shift
 
-  local opt="" val="" optstring=""
-  typeset -a extra_long_opts
-  typeset -A options_map
+  declare opt="" val="" optstring=""
+  declare -a extra_long_opts
+  declare -A options_map
 
-  local split="(\\ \\ |	|[[:blank:]]*\$)"
-  local name_regex='[a-zA-Z0-9][-_a-zA-Z0-9]*[a-zA-Z0-9]+'
-  local short_opt_regex="-[a-zA-Z0-9]"
-  local long_opt_regex="--$name_regex"
-  local single_arg_regex='[a-zA-Z0-9][^[:blank:]]*'
-  local args_regex="${single_arg_regex},?(\\[[^]]*\\.\\.\\.[^]]*\\])?"
-  local multi_args_regex="${single_arg_regex},?\\[[^]]*\\.\\.\\.[^]]*\\]"
+  declare split="(\\ \\ |	|[[:blank:]]*\$)"
+  declare name_regex='[a-zA-Z0-9][-_a-zA-Z0-9]*[a-zA-Z0-9]+'
+  declare short_opt_regex="-[a-zA-Z0-9]"
+  declare long_opt_regex="--$name_regex"
+  declare single_arg_regex='[a-zA-Z0-9][^[:blank:]]*'
+  declare args_regex="${single_arg_regex},?(\\[[^]]*\\.\\.\\.[^]]*\\])?"
+  declare multi_args_regex="${single_arg_regex},?\\[[^]]*\\.\\.\\.[^]]*\\]"
 
-  while read -r -u 6 line; do
-    local short_opt='' long_opt='' opt_arg=''
+  while builtin read -r -u 6 line; do
+    declare short_opt='' long_opt='' opt_arg=''
     declare -a rematch=()
     if [[ "$line" =~ ^$short_opt_regex$split ]]; then
       #debug : -h : single opt: $line
@@ -86,7 +88,7 @@ function gnu_generic_getopts() {
       long_opt="${rematch[2]}"
       opt_arg="${rematch[4]}"
     else
-      continue # non-option lines
+      builtin continue # non-option lines
     fi
     short_opt="${short_opt#-}"
     long_opt="${long_opt#--}"
@@ -121,7 +123,7 @@ function gnu_generic_getopts() {
   #info "$@"
   declare -a standard_params
   while param="${1:-}"; [[ -n "$param" ]]; do
-    shift
+    builtin shift
     if [[ "$param" == "--" ]]; then
       standard_params+=("--" "$@")
       break;
@@ -136,10 +138,10 @@ function gnu_generic_getopts() {
   #debug "${standard_params[@]}"
   [[ -z "${standard_params:-}" ]] ||
       set -- "${standard_params[@]}"
-  local retval=0
+  declare retval=0
   while param="${1:-}"; [[ -n "$param" ]]; do
-    shift
-    local val='' opt='' boolopt='' appendopt=''
+    builtin shift
+    declare val='' opt='' boolopt='' appendopt=''
     if [[ "$param" == "--" ]]; then
       ARGUMENTS+=("$@")
       break;
@@ -156,7 +158,7 @@ function gnu_generic_getopts() {
         val="${opt#*=}"
         opt="${opt%%=*}"
       fi
-      local optkey="${options_map[$opt]:-}"
+      declare optkey="${options_map[$opt]:-}"
       if [[ -z "$optkey" ]]; then
         errmsg="Invalid option \"$param\"."
         OPTIONS_ERROR+=("$errmsg")
@@ -180,7 +182,7 @@ function gnu_generic_getopts() {
         fi
       fi
       if [[ "$val" == [=+] ]]; then
-        local val="${1:-}"
+        declare val="${1:-}"
         [[ "$val" == "-"* ]] && val=
         if [[ -z "$val" ]]; then
           optkey=
@@ -190,7 +192,7 @@ function gnu_generic_getopts() {
           retval=1
           #break
         else
-          shift
+          builtin shift
         fi
       fi
       [[ -n "$optkey" ]] && if [[ -n "$appendopt" ]] && [[ -n "${OPTIONS[$optkey]:-}" ]]; then
@@ -204,14 +206,13 @@ function gnu_generic_getopts() {
     fi
   done
   #declare -p OPTIONS >&2
-  return "$retval"
+  builtin return "$retval"
 } >&2 2>/dev/null 8>/dev/null
 
-[[ -z "${ZSH_VERSION:-}" ]] && return
+[[ -z "${ZSH_VERSION:-}" ]] && builtin return
 
 gnu_generic_getopts "$@"
 
 # vi: set shiftwidth=2 :
 # vi: set tabstop=2 :
 # vi: set ft=sh :
-# -*- mode: sh -*-
